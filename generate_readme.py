@@ -1,5 +1,6 @@
 import csv
 from collections import defaultdict
+import urllib.parse
 
 # Define start and stop markers
 START_MARKER = "<!-- START_GENERATED_CONTENT -->"
@@ -61,10 +62,13 @@ def generate_readme(csv_file, readme_file):
         if category in category_descriptions:
             new_content += f'{category_descriptions[category]}\n\n'
         for subreddit in subs:
-            subreddit_name = subreddit['subreddit']
+            subreddit_name = subreddit['subreddit'].replace('r/', '')
             link = subreddit['subreddit_url']
             description = subreddit['sub_description']
-            badge = f'[![View Subreddit](https://img.shields.io/badge/View-Subreddit-orange)]({link})'
+            
+            # Create static badge using shields.io with URL-safe encoding
+            encoded_name = urllib.parse.quote(subreddit_name)
+            badge = f'[![View Subreddit](https://img.shields.io/badge/View-{encoded_name}-orange)]({link})'
             
             new_content += f'### {subreddit_name}\n\n'
             if description:
